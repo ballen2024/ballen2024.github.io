@@ -1,0 +1,34 @@
+---
+title: "Untitled"
+author: "Brendan Allen"
+output:
+  html_document:
+    df_print: paged
+---
+
+###Phase 1:
+
+```{r}
+suppressMessages(library(tidyr))
+suppressMessages(library(dplyr))
+suppressMessages(library(tidyverse))
+
+raw <- suppressMessages(read_csv("https://query.data.world/s/jo4zezsyrfp3rnutrsmjk7nzw75npd"))
+
+game_data <- tibble(date=raw$date, 
+                    day=raw$day_of_week, 
+                    day_night=raw$day_night, 
+                    v_name=raw$v_name, 
+                    h_name=raw$h_name,
+                    park_id=raw$park_id,
+                    attendance=raw$attendance,
+                    duration=raw$length_minutes,
+                    v_score=raw$v_score,
+                    h_score=raw$h_score,
+                    v_hits=raw$v_hits,
+                    h_hits=raw$h_hits,
+                    v_homeruns=raw$v_homeruns,
+                    h_homeruns=raw$h_homeruns)
+
+
+```
