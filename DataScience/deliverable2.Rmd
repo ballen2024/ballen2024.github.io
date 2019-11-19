@@ -20,7 +20,7 @@ text-align: justify}
 ####[Phase 3: Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
 
 ###Getting Started
-First we want to import any necessary libraries we will be using.
+**First we want to import any necessary libraries we will be using.**
 
 **Note: Uncomment the install lines if you haven't yet installed these packages**
 ```{r warning=FALSE}
