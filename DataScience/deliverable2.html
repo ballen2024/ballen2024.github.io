@@ -192,8 +192,10 @@ $(document).ready(function () {
 </div>
 
 
-<div id="coming-soon" class="section level3">
-<h3>Coming soon…</h3>
+<style>
+body {
+text-align: justify}
+</style>
 <div id="home" class="section level4">
 <h4><a href="https://ballen2024.github.io/DataScience/index.html">Home</a></h4>
 </div>
@@ -206,6 +208,18 @@ $(document).ready(function () {
 <div id="phase-3-results-and-operationalization" class="section level4">
 <h4><a href="https://ballen2024.github.io/DataScience/deliverable3.html">Phase 3: Results and Operationalization</a></h4>
 </div>
+<div id="getting-started" class="section level3">
+<h3>Getting Started</h3>
+<p>First we want to import any necessary libraries we will be using.</p>
+<p><strong>Note: Uncomment the install lines if you haven’t yet installed these packages</strong></p>
+<pre class="r"><code>suppressMessages(library(tidyr))
+suppressMessages(library(dplyr))
+suppressMessages(library(tidyverse))
+# suppressMessages(install.packages(&quot;devtools&quot;))
+# suppressMessages(devtools::install_github(&quot;stefanedwards/lemon&quot;))
+suppressMessages(library(lemon))
+suppressMessages(library(scales))
+knit_print.data.frame &lt;- lemon_print</code></pre>
 </div>
 
 

@@ -1,0 +1,140 @@
+---
+title: "Phase 1: Discovery and Preparation of MLB Data"
+author: "Brendan Allen"
+output:
+  html_document:
+    df_print: paged
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+
+####[Home](https://ballen2024.github.io/DataScience/index.html)
+
+####[Phase 1: Discovery and Data Preparation](https://ballen2024.github.io/DataScience/deliverable1.html)
+
+####[Phase 2: Model Planning and Building](https://ballen2024.github.io/DataScience/deliverable2.html)
+
+####[Phase 3: Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
+
+###Getting Started
+First we want to import any necessary libraries we will be using. 
+
+```{r warning=FALSE}
+suppressMessages(library(tidyr))
+suppressMessages(library(dplyr))
+suppressMessages(library(tidyverse))
+# suppressMessages(install.packages("devtools"))
+# suppressMessages(devtools::install_github("stefanedwards/lemon"))
+suppressMessages(library(lemon))
+suppressMessages(library(scales))
+knit_print.data.frame <- lemon_print
+```
+
+###Looking at the Data
+The data source [**Retrosheet**](https://www.retrosheet.org/) is a non-profit organization that is passionate about logging MLB data, old and new alike. The organization seems to be reputable and has been operating for over 20 years in collecting MLB statistics. The initial dataset `game_logs` includes **171,907 observations** with **161 variables**. Given the size and robustness of this dataset, it is not entirely useful to use all of it. For example, much of the game data from 1871 is not going to be entirely relevant if I want to corroborate with other available datasets, given that there likely won't be data from that year. There are also some missing data points or points labeled **0**. It is tough to tell whether **0** is an accurate representation of that attribute at that game or if it is an arbitrary value to indicate that data was not available for it.
+
+**For this stage of analysis, I have cleaned up the initial dataset to include 14 variables, which include:**
+
+* __`date`__
+    + The date of the game formatted in `yyyymmdd`.
+* __`day`__
+    + The day of the week in a three letter abbreviated format. e.g. `Sun` for Sunday.
+* __`day_night`__
+    + Indicates if the game was a day game (`D`) or night game (`N`).
+* __`v_name`__
+    + The visiting team name given in a three character code corrsponding to the team's full name. Merging this attribute with a lookup table will be essential.
+* __`h_name`__
+    + The home team name given in a three character code corrsponding to the team's full name.
+* __`park_id`__
+    + A five character code corresponding to the city and which park if there are multiple in that city.
+* __`attendance`__
+    + Double type of the number of people in attendance of the game.
+* __`duration`__
+    + How long the game lasted in minutes.
+* __`v_score`__
+    + The number of runs that the visiting team scored.
+* __`h_score`__
+    + The number of runs that the home team scored.
+* __`v_hits`__
+    + The number of hits that the visiting team had.
+* __`h_hits`__
+    + The number of hits that the home team had.
+* __`v_homeruns`__
+    + The number of homeruns that the visiting team had.
+* __`h_homeruns`__
+    + The number of homeruns that the home team had.
+
+This was done using `tibble` to create a cleaner and more concise table of our `game_logs` data. Additionally, I omitted the `NA` values, since they are not useful data points.
+```{r warning=FALSE}
+raw <- suppressMessages(read_csv("https://query.data.world/s/jo4zezsyrfp3rnutrsmjk7nzw75npd"))
+
+game_data <- tibble(date=raw$date, 
+                    day=raw$day_of_week, 
+                    day_night=raw$day_night, 
+                    v_name=raw$v_name, 
+                    h_name=raw$h_name,
+                    park_id=raw$park_id,
+                    attendance=raw$attendance,
+                    duration=raw$length_minutes,
+                    v_score=raw$v_score,
+                    h_score=raw$h_score,
+                    v_hits=raw$v_hits,
+                    h_hits=raw$h_hits,
+                    v_homeruns=raw$v_homeruns,
+                    h_homeruns=raw$h_homeruns)
+
+game_data <- game_data %>%
+  na.omit()
+```
+
+###Here is a quick look at the data so far
+
+**This is a general look at all of the variables in the cleaned dataset**
+```{r render=lemon_print, echo=FALSE}
+head(game_data)
+df <- summary(game_data[7:14])
+```
+
+**This is a summary of the data, with some key markers of `min`, `mean` and `max` values of each variable**.
+
+It is worth noting that `v_homeruns` and `h_homeruns` indicate a minimum value of `-1`. It obviously is not possible to hit -1 homeruns, and I couldn't find any information from Retrosheet on why the value is expressed this way. However, this value only comes up in 23 games in the 1870's for both the home and visiting team. I consider it okay to omit these games when processing homerun stats.
+```{r render=lemon_print, echo=FALSE}
+head(df)
+```
+
+###Initial Exploration
+
+**An interesting finding was that according to our initial set, there is an exactly equal distribution of night and day games**
+
+```{r, echo=FALSE, render=lemon_print}
+t <- table(game_data$day_night)
+day_night_data <- as.data.frame(t)
+colnames(day_night_data) <- c("Game Time", "Number of Games")
+day_night_data$`Game Time` <- c("Day","Night") 
+head(day_night_data)
+# p <- ggplot(day_night_data, aes(x=Var1,y=Freq)) + geom_bar(stat = "identity", fill="steelblue3") + geom_text(aes(label= paste("Count = ", day_night_data$Freq)), vjust=1.6, color="white", size=4) + labs(x = "Game Time (Day/Night)",y="Number of Games",title="Frequency of Day/Night Games from 1871-2016")
+```
+
+**Total attendance by year**
+
+It will be interesting to look into any significance of the years that do not seem to be on an upward linear trend in attendance.
+
+```{r echo = FALSE}
+require(scales)
+date <- as.character(game_data$date)
+year <- substr(date, 1, 4)
+p <- ggplot(game_data, aes(x = year, y = game_data$attendance)) + geom_bar(stat="identity", fill="steelblue3") + theme(axis.text.x = element_text(angle=45, hjust=1)) + labs(y="Total Attendance",x="Year") + scale_x_discrete(breaks =  seq(1871, 2016, 5)) + scale_y_continuous(labels = scales::comma)
+p
+```
+
+###Potential Questions to Explore
+
+1. __Do foul balls pose a serious safety risk to fans at MLB games?__
+    + Some social implications of pursuing this question could potentially be greater safety precautions for MLB parks or separate requirements for fans that attend games to be equipped in safety or perhaps waiving any rights upon potential harm from a foul ball.
+
+2. __Are homeruns or basehits more impactful in winning games, and will this affect the way teams draft players?__
+    + This could affect the types of people that are drafted and the way people train. There is no telling what kinds of long term affects this could have on how the game of baseball would be played.

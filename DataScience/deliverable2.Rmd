@@ -1,0 +1,37 @@
+---
+title: "Phase 2: Model Planning and Building"
+author: "Brendan Allen"
+output:
+  html_document:
+    df_print: paged
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+####[Home](https://ballen2024.github.io/DataScience/index.html)
+
+####[Phase 1: Discovery and Data Preparation](https://ballen2024.github.io/DataScience/deliverable1.html)
+
+####[Phase 2: Model Planning and Building](https://ballen2024.github.io/DataScience/deliverable2.html)
+
+####[Phase 3: Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
+
+###Getting Started
+First we want to import any necessary libraries we will be using.
+
+**Note: Uncomment the install lines if you haven't yet installed these packages**
+```{r warning=FALSE}
+suppressMessages(library(tidyr))
+suppressMessages(library(dplyr))
+suppressMessages(library(tidyverse))
+# suppressMessages(install.packages("devtools"))
+# suppressMessages(devtools::install_github("stefanedwards/lemon"))
+suppressMessages(library(lemon))
+suppressMessages(library(scales))
+knit_print.data.frame <- lemon_print
+```
+
+

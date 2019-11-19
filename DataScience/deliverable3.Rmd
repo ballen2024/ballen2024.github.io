@@ -1,0 +1,17 @@
+---
+title: "Phase 3: Results and Operationalization"
+author: "Brendan Allen"
+output:
+  html_document:
+    df_print: paged
+---
+
+###Coming soon...
+
+####[Home](https://ballen2024.github.io/DataScience/index.html)
+
+####[Phase 1: Discovery and Data Preparation](https://ballen2024.github.io/DataScience/deliverable1.html)
+
+####[Phase 2: Model Planning and Building](https://ballen2024.github.io/DataScience/deliverable2.html)
+
+####[Phase 3: Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
