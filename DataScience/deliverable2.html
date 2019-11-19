@@ -214,12 +214,21 @@ text-align: justify}
 <p><strong>Note: Uncomment the install lines if you haven’t yet installed these packages</strong></p>
 <pre class="r"><code>suppressMessages(library(tidyr))
 suppressMessages(library(dplyr))
-suppressMessages(library(tidyverse))
 # suppressMessages(install.packages(&quot;devtools&quot;))
 # suppressMessages(devtools::install_github(&quot;stefanedwards/lemon&quot;))
 suppressMessages(library(lemon))
 suppressMessages(library(scales))
 knit_print.data.frame &lt;- lemon_print</code></pre>
+<p><strong>We will want to import all of our work from <a href="https://ballen2024.github.io/DataScience/deliverable1.html">Phase 1</a> as well.</strong></p>
+<pre class="r"><code>include &lt;- function(library_name){
+  if( !(library_name %in% installed.packages()) )
+    install.packages(library_name) 
+  library(library_name, character.only=TRUE)
+}
+include(&quot;tidyverse&quot;)
+include(&quot;knitr&quot;)
+purl(&quot;deliverable1.Rmd&quot;, output = &quot;deliverable1.r&quot;)
+source(&quot;deliverable1.r&quot;)</code></pre>
 </div>
 
 
