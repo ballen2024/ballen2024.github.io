@@ -1,6 +1,6 @@
 ---
-title: "Maybe Baseball Isn't As Boring As You Think" #replace the title with something short and catchy to represent your project
-subtitle: "Brendan's Data Science Portfolio" #replace blank with your name
+title: "Maybe Baseball Isn't As Boring As You Think"
+subtitle: "Brendan's Data Science Portfolio"
 output:
   html_document:
     df_print: paged
