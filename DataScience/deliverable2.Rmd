@@ -44,20 +44,32 @@ source("deliverable1.r")
 **Let's read in our new data on foul balls**
 ```{r}
 foul_balls <- suppressMessages(read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/foul-balls/foul-balls.csv"))
+baseball <- suppressMessages(read_csv("./savant_data.csv"))
+baseball <- baseball %>%
+  select(c(game_date, player_name, home_team, away_team, launch_speed, launch_angle))
 ```
 
 ###Looking at the Data
-The data source [*Baseball Savant**](https://baseballsavant.mlb.com/statcast_search?hfPT=&hfAB=&hfBBT=&hfPR=foul%7C&hfZ=&stadium=&hfBBL=&hfNewZones=&hfGT=R%7C&hfC=&hfSea=2019%7C&hfSit=&player_type=pitcher&hfOuts=&opponent=&pitcher_throws=&batter_stands=&hfSA=&game_date_gt=&game_date_lt=2019-06-05&hfInfield=&team=&position=&hfOutfield=&hfRO=&home_road=&hfFlag=&hfPull=&metric_1=&hfInn=&min_pitches=0&min_results=0&group_by=venue&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_pas=0#results) is an MLB affiliate that collects baseball statistics for major league games. The initial data set here `foul_balls` includes **906** observations with **7** variables. The dataset was used originally to observe where the most dangerous foul balls land, which is discussed in depth in [this story](https://fivethirtyeight.com/features/we-watched-906-foul-balls-to-find-out-where-the-most-dangerous-ones-land/). Just in my initial investigation, there appeared to be some `NA` data points, so we'll have to clean the data up.
+The data source [**Baseball Savant**](https://baseballsavant.mlb.com/statcast_search?hfPT=&hfAB=&hfBBT=&hfPR=foul%7C&hfZ=&stadium=&hfBBL=&hfNewZones=&hfGT=R%7C&hfC=&hfSea=2019%7C&hfSit=&player_type=pitcher&hfOuts=&opponent=&pitcher_throws=&batter_stands=&hfSA=&game_date_gt=&game_date_lt=2019-06-05&hfInfield=&team=&position=&hfOutfield=&hfRO=&home_road=&hfFlag=&hfPull=&metric_1=&hfInn=&min_pitches=0&min_results=0&group_by=venue&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_pas=0#results) is an MLB affiliate that collects baseball statistics for major league games. The initial data set here `foul_balls` includes **906** observations with **7** variables. The dataset was used originally to observe where the most dangerous foul balls land, which is discussed in depth in [this story](https://fivethirtyeight.com/features/we-watched-906-foul-balls-to-find-out-where-the-most-dangerous-ones-land/). Just in my initial investigation, there appeared to be some `NA` data points, so we'll have to clean the data up.
 
 **For this stage of analysis, I had to clean up the new dataset; although, I'll be keeping all of the variables for my analysis. These include:**
 
 * __`matchup`__
-    + The two teams that played. Formatted like `Atlanta Braves vs New York Mets`
+    + The two teams that played. Formatted like `Atlanta Braves vs New York Mets`. In order to have a merge point for this set and the previous set, I am going to make a lookup table with the team names and their corresponding three character codes.
 * __`game_date`__
     + Date of the most foul-heavy day at each stadium. Formatted like `yyyymmdd`.
 * __`type_of_hit`__
-    + Fly, grounder, line drive, pop up or batter hit self
+    + Fly, grounder, line drive, pop up or batter hit self. Formated as a lowercase string.
 * __`exit_velocity`__
+    + Recorded exit velocity of each hit -- blank if not provided. Formatted as a double
 * __`predicted_zone`__
+    + The zone we predicted the foul ball would land in by gauging angles. Formatted as a factor.
 * __`camera_zone`__
+    + The zone that the foul ball landed in, confirmed by footage. Formatted as a factor.
 * __`used_zone`__
+    + The zone used for analysis. Formatted as a factor.
+
+```{r}
+
+```
+

@@ -224,10 +224,43 @@ knit_print.data.frame &lt;- lemon_print</code></pre>
 <p><strong>We will want to import all of our work from <a href="https://ballen2024.github.io/DataScience/deliverable1.html">Phase 1</a> as well.</strong></p>
 <pre class="r"><code>purl(&quot;deliverable1.Rmd&quot;, output = &quot;deliverable1.r&quot;)
 source(&quot;deliverable1.r&quot;)</code></pre>
+<p><strong>Let’s read in our new data on foul balls</strong></p>
+<pre class="r"><code>foul_balls &lt;- suppressMessages(read_csv(&quot;https://raw.githubusercontent.com/fivethirtyeight/data/master/foul-balls/foul-balls.csv&quot;))</code></pre>
 </div>
-<div id="lets-read-in-our-new-data-on-foul-balls" class="section level3">
-<h3>Let’s read in our new data on foul balls</h3>
-<pre class="r"><code>foul_balls &lt;- read_csv(&quot;https://raw.githubusercontent.com/fivethirtyeight/data/master/foul-balls/foul-balls.csv&quot;)</code></pre>
+<div id="looking-at-the-data" class="section level3">
+<h3>Looking at the Data</h3>
+<p>The data source <a href="https://baseballsavant.mlb.com/statcast_search?hfPT=&amp;hfAB=&amp;hfBBT=&amp;hfPR=foul%7C&amp;hfZ=&amp;stadium=&amp;hfBBL=&amp;hfNewZones=&amp;hfGT=R%7C&amp;hfC=&amp;hfSea=2019%7C&amp;hfSit=&amp;player_type=pitcher&amp;hfOuts=&amp;opponent=&amp;pitcher_throws=&amp;batter_stands=&amp;hfSA=&amp;game_date_gt=&amp;game_date_lt=2019-06-05&amp;hfInfield=&amp;team=&amp;position=&amp;hfOutfield=&amp;hfRO=&amp;home_road=&amp;hfFlag=&amp;hfPull=&amp;metric_1=&amp;hfInn=&amp;min_pitches=0&amp;min_results=0&amp;group_by=venue&amp;sort_col=pitches&amp;player_event_sort=h_launch_speed&amp;sort_order=desc&amp;min_pas=0#results"><strong>Baseball Savant</strong></a> is an MLB affiliate that collects baseball statistics for major league games. The initial data set here <code>foul_balls</code> includes <strong>906</strong> observations with <strong>7</strong> variables. The dataset was used originally to observe where the most dangerous foul balls land, which is discussed in depth in <a href="https://fivethirtyeight.com/features/we-watched-906-foul-balls-to-find-out-where-the-most-dangerous-ones-land/">this story</a>. Just in my initial investigation, there appeared to be some <code>NA</code> data points, so we’ll have to clean the data up.</p>
+<p><strong>For this stage of analysis, I had to clean up the new dataset; although, I’ll be keeping all of the variables for my analysis. These include:</strong></p>
+<ul>
+<li><strong><code>matchup</code></strong>
+<ul>
+<li>The two teams that played. Formatted like <code>Atlanta Braves vs New York Mets</code>. In order to have a merge point for this set and the previous set, I am going to make a lookup table with the team names and their corresponding three character codes.</li>
+</ul></li>
+<li><strong><code>game_date</code></strong>
+<ul>
+<li>Date of the most foul-heavy day at each stadium. Formatted like <code>yyyymmdd</code>.</li>
+</ul></li>
+<li><strong><code>type_of_hit</code></strong>
+<ul>
+<li>Fly, grounder, line drive, pop up or batter hit self. Formated as a lowercase string.</li>
+</ul></li>
+<li><strong><code>exit_velocity</code></strong>
+<ul>
+<li>Recorded exit velocity of each hit – blank if not provided. Formatted as a double</li>
+</ul></li>
+<li><strong><code>predicted_zone</code></strong>
+<ul>
+<li>The zone we predicted the foul ball would land in by gauging angles. Formatted as a factor.</li>
+</ul></li>
+<li><strong><code>camera_zone</code></strong>
+<ul>
+<li>The zone that the foul ball landed in, confirmed by footage. Formatted as a factor.</li>
+</ul></li>
+<li><strong><code>used_zone</code></strong>
+<ul>
+<li>The zone used for analysis. Formatted as a factor.</li>
+</ul></li>
+</ul>
 </div>
 
 
