@@ -326,33 +326,23 @@ source(&quot;deliverable1.r&quot;)</code></pre>
 launch_data &lt;- suppressMessages(read_csv(&quot;./savant_data.csv&quot;))
 standings &lt;- suppressMessages(read_csv(&quot;./standings.csv&quot;))</code></pre>
 <p><strong>We’ll want to clean up our data now</strong></p>
-<p>In this block, I filtered our initial game data (<code>game_data</code>) to only include games from 1990-2016; omitted the missing data from our original foul balls data (<code>foul_balls</code>) from the article and our new foul ball data (<code>launch_data</code>) from the 2016 season; and narrowed our data selection in all of our sets. I’ll go into greater detail on these selected variables.</p>
+<p>In this block, I filtered our initial game data (<code>game_data</code>) to only include games from 2000-2016; omitted the missing data from our original foul balls data (<code>foul_balls</code>) from the article and our new foul ball data (<code>launch_data</code>) from the 2016 season; narrowed our data selection in all of our sets; and renamed the columns.</p>
 <pre class="r"><code>game_data &lt;- game_data %&gt;%
-  filter(date &gt;= 19900101)
-
-foul_balls &lt;- foul_balls %&gt;%
-  na.omit()
-
-launch_data &lt;- launch_data %&gt;%
-  select(c(game_date, player_name, home_team, away_team, launch_speed, launch_angle)) %&gt;%
-  filter(launch_speed != &quot;null&quot;, launch_angle != &quot;null&quot;)
-
-standings &lt;- standings %&gt;%
-  select(c(Rk, Tm, G, W, L, Rdiff))</code></pre>
-<p><strong>I wanted to rename the columns of our sets too</strong></p>
-<pre class="r"><code>game_data &lt;- game_data %&gt;%
+  filter(date &gt;= 19900101) %&gt;%
   rename(away=v_name, home=h_name)
 
 foul_balls &lt;- foul_balls %&gt;%
+  na.omit() %&gt;%
   rename(date = game_date, hit_type = type_of_hit, velocity = exit_velocity)
 
 launch_data &lt;- launch_data %&gt;%
+  select(c(game_date, player_name, home_team, away_team, launch_speed, launch_angle)) %&gt;%
+  filter(launch_speed != &quot;null&quot;, launch_angle != &quot;null&quot;) %&gt;%
   rename(date=game_date, field=player_name, home=home_team, away=away_team, velocty=launch_speed, angle=launch_angle)
 
 standings &lt;- standings %&gt;%
-  rename(rank=Rk, team=Tm, games=G, win=W, losses=L, run_diff=Rdiff)
-
-new&lt;-game_data</code></pre>
+  select(c(Rk, Tm, G, W, L, Rdiff)) %&gt;%
+  rename(rank=Rk, team=Tm, games=G, wins=W, losses=L, run_diff=Rdiff)</code></pre>
 <p><strong>Now we need to standardize the formatting of our variables</strong></p>
 <p>Here we converted the dates to an actual date format, made our foul ball zones factors, and our velocity and angle to a numeric type instead of a character.</p>
 <pre class="r"><code>game_data$date &lt;- as.character(game_data$date)

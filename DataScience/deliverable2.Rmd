@@ -105,37 +105,24 @@ standings <- suppressMessages(read_csv("./standings.csv"))
 
 **We'll want to clean up our data now**
 
-In this block, I filtered our initial game data (`game_data`) to only include games from 1990-2016; omitted the missing data from our original foul balls data (`foul_balls`) from the article and our new foul ball data (`launch_data`) from the 2016 season; and narrowed our data selection in all of our sets. I'll go into greater detail on these selected variables.
+In this block, I filtered our initial game data (`game_data`) to only include games from 2000-2016; omitted the missing data from our original foul balls data (`foul_balls`) from the article and our new foul ball data (`launch_data`) from the 2016 season; narrowed our data selection in all of our sets; and renamed the columns.
 ```{r}
 game_data <- game_data %>%
-  filter(date >= 19900101)
-
-foul_balls <- foul_balls %>%
-  na.omit()
-
-launch_data <- launch_data %>%
-  select(c(game_date, player_name, home_team, away_team, launch_speed, launch_angle)) %>%
-  filter(launch_speed != "null", launch_angle != "null")
-
-standings <- standings %>%
-  select(c(Rk, Tm, G, W, L, Rdiff))
-```
-
-**I wanted to rename the columns of our sets too**
-```{r}
-game_data <- game_data %>%
+  filter(date >= 19900101) %>%
   rename(away=v_name, home=h_name)
 
 foul_balls <- foul_balls %>%
+  na.omit() %>%
   rename(date = game_date, hit_type = type_of_hit, velocity = exit_velocity)
 
 launch_data <- launch_data %>%
+  select(c(game_date, player_name, home_team, away_team, launch_speed, launch_angle)) %>%
+  filter(launch_speed != "null", launch_angle != "null") %>%
   rename(date=game_date, field=player_name, home=home_team, away=away_team, velocty=launch_speed, angle=launch_angle)
 
 standings <- standings %>%
+  select(c(Rk, Tm, G, W, L, Rdiff)) %>%
   rename(rank=Rk, team=Tm, games=G, wins=W, losses=L, run_diff=Rdiff)
-
-new<-game_data
 ```
 
 **Now we need to standardize the formatting of our variables**
