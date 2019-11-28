@@ -369,8 +369,401 @@ teams$space_front &lt;- paste(&quot;&quot;, teams$full)
 teams$space_back &lt;- paste(teams$full, &quot;&quot;)
 foul_balls$home &lt;- teams[match(foul_balls$home, teams$space_front), &quot;abb&quot;]
 foul_balls$away &lt;- teams[match(foul_balls$away, teams$space_back), &quot;abb&quot;]</code></pre>
+<p><strong>Here is a quick look at our data after being cleaned up</strong></p>
+<p><strong><code>game_data</code></strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">date</th>
+<th align="left">day</th>
+<th align="left">day_night</th>
+<th align="left">away</th>
+<th align="left">home</th>
+<th align="left">park_id</th>
+<th align="right">attendance</th>
+<th align="right">duration</th>
+<th align="right">v_score</th>
+<th align="right">h_score</th>
+<th align="right">v_hits</th>
+<th align="right">h_hits</th>
+<th align="right">v_homeruns</th>
+<th align="right">h_homeruns</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">2000-03-29</td>
+<td align="left">Wed</td>
+<td align="left">N</td>
+<td align="left">CHN</td>
+<td align="left">NYN</td>
+<td align="left">TOK01</td>
+<td align="right">55000</td>
+<td align="right">206</td>
+<td align="right">5</td>
+<td align="right">3</td>
+<td align="right">12</td>
+<td align="right">7</td>
+<td align="right">2</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">2000-03-30</td>
+<td align="left">Thu</td>
+<td align="left">N</td>
+<td align="left">NYN</td>
+<td align="left">CHN</td>
+<td align="left">TOK01</td>
+<td align="right">55000</td>
+<td align="right">235</td>
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">2000-04-03</td>
+<td align="left">Mon</td>
+<td align="left">D</td>
+<td align="left">COL</td>
+<td align="left">ATL</td>
+<td align="left">ATL02</td>
+<td align="right">42255</td>
+<td align="right">134</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">6</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">2000-04-03</td>
+<td align="left">Mon</td>
+<td align="left">D</td>
+<td align="left">MIL</td>
+<td align="left">CIN</td>
+<td align="left">CIN08</td>
+<td align="right">55596</td>
+<td align="right">111</td>
+<td align="right">3</td>
+<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">2000-04-03</td>
+<td align="left">Mon</td>
+<td align="left">N</td>
+<td align="left">SFN</td>
+<td align="left">FLO</td>
+<td align="left">MIA01</td>
+<td align="right">35101</td>
+<td align="right">166</td>
+<td align="right">4</td>
+<td align="right">6</td>
+<td align="right">10</td>
+<td align="right">12</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">2000-04-03</td>
+<td align="left">Mon</td>
+<td align="left">N</td>
+<td align="left">LAN</td>
+<td align="left">MON</td>
+<td align="left">MON02</td>
+<td align="right">51249</td>
+<td align="right">157</td>
+<td align="right">10</td>
+<td align="right">4</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">2</td>
+<td align="right">2</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>foul_balls</code></strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">matchup</th>
+<th align="left">date</th>
+<th align="left">hit_type</th>
+<th align="right">velocity</th>
+<th align="left">predicted_zone</th>
+<th align="left">camera_zone</th>
+<th align="left">used_zone</th>
+<th align="left">home</th>
+<th align="left">away</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Seattle Mariners VS Minnesota Twins</td>
+<td align="left">2019-05-18</td>
+<td align="left">Fly</td>
+<td align="right">78.8</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">MIN</td>
+<td align="left">SEA</td>
+</tr>
+<tr class="even">
+<td align="left">Seattle Mariners VS Minnesota Twins</td>
+<td align="left">2019-05-18</td>
+<td align="left">Fly</td>
+<td align="right">76.0</td>
+<td align="left">5</td>
+<td align="left">5</td>
+<td align="left">5</td>
+<td align="left">MIN</td>
+<td align="left">SEA</td>
+</tr>
+<tr class="odd">
+<td align="left">Seattle Mariners VS Minnesota Twins</td>
+<td align="left">2019-05-18</td>
+<td align="left">Line</td>
+<td align="right">95.9</td>
+<td align="left">5</td>
+<td align="left">5</td>
+<td align="left">5</td>
+<td align="left">MIN</td>
+<td align="left">SEA</td>
+</tr>
+<tr class="even">
+<td align="left">Seattle Mariners VS Minnesota Twins</td>
+<td align="left">2019-05-18</td>
+<td align="left">Batter hits self</td>
+<td align="right">69.9</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">MIN</td>
+<td align="left">SEA</td>
+</tr>
+<tr class="odd">
+<td align="left">Seattle Mariners VS Minnesota Twins</td>
+<td align="left">2019-05-18</td>
+<td align="left">Line</td>
+<td align="right">84.9</td>
+<td align="left">5</td>
+<td align="left">5</td>
+<td align="left">5</td>
+<td align="left">MIN</td>
+<td align="left">SEA</td>
+</tr>
+<tr class="even">
+<td align="left">Seattle Mariners VS Minnesota Twins</td>
+<td align="left">2019-05-18</td>
+<td align="left">Fly</td>
+<td align="right">104.6</td>
+<td align="left">6</td>
+<td align="left">6</td>
+<td align="left">6</td>
+<td align="left">MIN</td>
+<td align="left">SEA</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>launch_data</code></strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">date</th>
+<th align="left">field</th>
+<th align="left">home</th>
+<th align="left">away</th>
+<th align="right">velocty</th>
+<th align="right">angle</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">2016-09-01</td>
+<td align="left">Citi Field</td>
+<td align="left">NYM</td>
+<td align="left">MIA</td>
+<td align="right">72.5</td>
+<td align="right">54.7</td>
+</tr>
+<tr class="even">
+<td align="left">2016-09-01</td>
+<td align="left">Citi Field</td>
+<td align="left">NYM</td>
+<td align="left">MIA</td>
+<td align="right">74.3</td>
+<td align="right">44.6</td>
+</tr>
+<tr class="odd">
+<td align="left">2016-09-01</td>
+<td align="left">Target Field</td>
+<td align="left">MIN</td>
+<td align="left">CWS</td>
+<td align="right">93.4</td>
+<td align="right">-6.9</td>
+</tr>
+<tr class="even">
+<td align="left">2016-09-01</td>
+<td align="left">Citi Field</td>
+<td align="left">NYM</td>
+<td align="left">MIA</td>
+<td align="right">77.8</td>
+<td align="right">21.7</td>
+</tr>
+<tr class="odd">
+<td align="left">2016-09-01</td>
+<td align="left">Target Field</td>
+<td align="left">MIN</td>
+<td align="left">CWS</td>
+<td align="right">68.3</td>
+<td align="right">27.4</td>
+</tr>
+<tr class="even">
+<td align="left">2016-09-01</td>
+<td align="left">Citi Field</td>
+<td align="left">NYM</td>
+<td align="left">MIA</td>
+<td align="right">73.0</td>
+<td align="right">40.0</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>standings</code></strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">rank</th>
+<th align="left">team</th>
+<th align="right">games</th>
+<th align="right">wins</th>
+<th align="right">losses</th>
+<th align="right">run_diff</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">CHC</td>
+<td align="right">162</td>
+<td align="right">103</td>
+<td align="right">58</td>
+<td align="right">1.6</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">WSN</td>
+<td align="right">162</td>
+<td align="right">95</td>
+<td align="right">67</td>
+<td align="right">0.9</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">TEX</td>
+<td align="right">162</td>
+<td align="right">95</td>
+<td align="right">67</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">CLE</td>
+<td align="right">161</td>
+<td align="right">94</td>
+<td align="right">67</td>
+<td align="right">0.6</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">BOS</td>
+<td align="right">162</td>
+<td align="right">93</td>
+<td align="right">69</td>
+<td align="right">1.1</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">LAD</td>
+<td align="right">162</td>
+<td align="right">91</td>
+<td align="right">71</td>
+<td align="right">0.5</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>teams</code></strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">full</th>
+<th align="left">abb</th>
+<th align="left">space_front</th>
+<th align="left">space_back</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Arizona Diamondsbacks</td>
+<td align="left">ARI</td>
+<td align="left">Arizona Diamondsbacks</td>
+<td align="left">Arizona Diamondsbacks</td>
+</tr>
+<tr class="even">
+<td align="left">Atlanta Braves</td>
+<td align="left">ATL</td>
+<td align="left">Atlanta Braves</td>
+<td align="left">Atlanta Braves</td>
+</tr>
+<tr class="odd">
+<td align="left">Baltimore Orioles</td>
+<td align="left">BAL</td>
+<td align="left">Baltimore Orioles</td>
+<td align="left">Baltimore Orioles</td>
+</tr>
+<tr class="even">
+<td align="left">Boston Red Sox</td>
+<td align="left">BOS</td>
+<td align="left">Boston Red Sox</td>
+<td align="left">Boston Red Sox</td>
+</tr>
+<tr class="odd">
+<td align="left">Chicago White Sox</td>
+<td align="left">CHA</td>
+<td align="left">Chicago White Sox</td>
+<td align="left">Chicago White Sox</td>
+</tr>
+<tr class="even">
+<td align="left">Chicago Cubs</td>
+<td align="left">CHN</td>
+<td align="left">Chicago Cubs</td>
+<td align="left">Chicago Cubs</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
+</div>
+<div id="predictions-to-model" class="section level3">
+<h3>Predictions to Model</h3>
+<p>Based on the initial phase and the newfound data, some predictions I would like to model are:</p>
+<ul>
+<li>Can you predict a team’s record based on their run differential in the first month of the season?
+<ul>
+<li>If you could predict a team’s record based on their run differential in the first month of the season, that would bring significant change to the climate of the first month of the season and I think there would be a difference in the trades occuring before the trade deadline in July.</li>
+</ul></li>
+<li>Do teams that hit more homeruns win more games?
+<ul>
+<li>If it was found that teams that hit more homeruns win more games, teams would probably want to draft more heavy hitters. Perhaps a look at which factors are significant in a teams record would be a good model.</li>
+</ul></li>
+</ul>
 </div>
 
 
