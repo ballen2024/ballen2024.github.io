@@ -10,14 +10,14 @@ output:
 ## Abstract
 I will be looking at Major League Baseball game data from 1871-2016. Specific attributes that I am looking to analyze are attendance increases over time, how the duration of the games have changed or not changed over the years, final scores relative to the number of home runs hit, etc. I would like to use this very large dataset as a base for future exploration of MLB data perhaps from an economic standpoint or from a safety standpoint, namely in the danger of foul balls and the risk they can pose for fans. So I far I have cleaned up my initial dataset to include relevant attributes for the time being.
 
-### 1. Discovery and Data Preparation
-The choice of this dataset came from a motivation to determine where the most dangerous foul balls land in the MLB, and if there is any interest in seeking to take more safety precautions against them. **[Here](https://ballen2024.github.io/DataScience/deliverable1.html)** is a more in depth look at the discovery and data preparation stage.
+### [1. Discovery and Data Preparation](https://ballen2024.github.io/DataScience/deliverable1.html)
+The choice of this dataset came from a motivation to determine where the most dangerous foul balls land in the MLB, and if there is any interest in seeking to take more safety precautions against them.
 
 
-### 2. Model Planning and Building
-**[Here](https://ballen2024.github.io/DataScience/deliverable2.html)** I clean and take a deeper look at other baseball datasets regarding foul balls and 2016 season standings; explore some models for these data; and visualize what these models say.
+### [2. Model Planning and Building](https://ballen2024.github.io/DataScience/deliverable2.html)
+In this phase I clean and take a deeper look at other baseball datasets regarding foul balls and 2016 season standings; explore some models for these data; and visualize what these models say.
 
-### 3. Results and Operationalization
+### [3. Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
 
 Coming soon...
 
