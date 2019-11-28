@@ -15,8 +15,7 @@ The choice of this dataset came from a motivation to determine where the most da
 
 
 ### 2. Model Planning and Building
-
-Coming soon...
+**[Here](https://ballen2024.github.io/DataScience/deliverable2.html)** I clean and take a deeper look at other baseball datasets regarding foul balls and 2016 season standings; explore some models for these data; and visualize what these models say.
 
 ### 3. Results and Operationalization
 
