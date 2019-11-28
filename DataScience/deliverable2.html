@@ -220,31 +220,33 @@ suppressMessages(library(lemon))
 suppressMessages(library(scales))
 suppressMessages(library(tidyverse))
 suppressMessages(library(knitr))
+suppressMessages(library(stringr))
 knit_print.data.frame &lt;- lemon_print</code></pre>
 <p><strong>We will want to import all of our work from <a href="https://ballen2024.github.io/DataScience/deliverable1.html">Phase 1</a> as well.</strong></p>
 <pre class="r"><code>purl(&quot;deliverable1.Rmd&quot;, output = &quot;deliverable1.r&quot;)
 source(&quot;deliverable1.r&quot;)</code></pre>
-<p><strong>Let’s read in our new data on foul balls</strong></p>
-<pre class="r"><code>foul_balls &lt;- suppressMessages(read_csv(&quot;https://raw.githubusercontent.com/fivethirtyeight/data/master/foul-balls/foul-balls.csv&quot;))</code></pre>
 </div>
 <div id="looking-at-the-data" class="section level3">
 <h3>Looking at the Data</h3>
-<p>The data source <a href="https://baseballsavant.mlb.com/statcast_search?hfPT=&amp;hfAB=&amp;hfBBT=&amp;hfPR=foul%7C&amp;hfZ=&amp;stadium=&amp;hfBBL=&amp;hfNewZones=&amp;hfGT=R%7C&amp;hfC=&amp;hfSea=2019%7C&amp;hfSit=&amp;player_type=pitcher&amp;hfOuts=&amp;opponent=&amp;pitcher_throws=&amp;batter_stands=&amp;hfSA=&amp;game_date_gt=&amp;game_date_lt=2019-06-05&amp;hfInfield=&amp;team=&amp;position=&amp;hfOutfield=&amp;hfRO=&amp;home_road=&amp;hfFlag=&amp;hfPull=&amp;metric_1=&amp;hfInn=&amp;min_pitches=0&amp;min_results=0&amp;group_by=venue&amp;sort_col=pitches&amp;player_event_sort=h_launch_speed&amp;sort_order=desc&amp;min_pas=0#results"><strong>Baseball Savant</strong></a> is an MLB affiliate that collects baseball statistics for major league games. The initial data set here <code>foul_balls</code> includes <strong>906</strong> observations with <strong>7</strong> variables. The dataset was used originally to observe where the most dangerous foul balls land, which is discussed in depth in <a href="https://fivethirtyeight.com/features/we-watched-906-foul-balls-to-find-out-where-the-most-dangerous-ones-land/">this story</a>. Just in my initial investigation, there appeared to be some <code>NA</code> data points, so we’ll have to clean the data up.</p>
-<p><strong>For this stage of analysis, I had to clean up the new dataset; although, I’ll be keeping all of the variables for my analysis. These include:</strong></p>
+<p>The data source <a href="https://baseballsavant.mlb.com/statcast_search?hfPT=&amp;hfAB=&amp;hfBBT=&amp;hfPR=foul%7C&amp;hfZ=&amp;stadium=&amp;hfBBL=&amp;hfNewZones=&amp;hfGT=R%7C&amp;hfC=&amp;hfSea=2019%7C&amp;hfSit=&amp;player_type=pitcher&amp;hfOuts=&amp;opponent=&amp;pitcher_throws=&amp;batter_stands=&amp;hfSA=&amp;game_date_gt=&amp;game_date_lt=2019-06-05&amp;hfInfield=&amp;team=&amp;position=&amp;hfOutfield=&amp;hfRO=&amp;home_road=&amp;hfFlag=&amp;hfPull=&amp;metric_1=&amp;hfInn=&amp;min_pitches=0&amp;min_results=0&amp;group_by=venue&amp;sort_col=pitches&amp;player_event_sort=h_launch_speed&amp;sort_order=desc&amp;min_pas=0#results"><strong>Baseball Savant</strong></a> is an MLB affiliate that collects baseball statistics for major league games. The initial data set here <code>foul_balls</code> includes <strong>906</strong> observations with <strong>7</strong> variables. The dataset was used originally to observe where the most dangerous foul balls land, which is discussed in depth in <a href="https://fivethirtyeight.com/features/we-watched-906-foul-balls-to-find-out-where-the-most-dangerous-ones-land/">this story</a>. Our <code>launch_data</code> set was also collected from this source. I also used <a href="https://www.baseball-reference.com/leagues/MLB/2016-standings.shtml"><strong>Baseball Reference</strong></a> to gather data on standings for the 2016 MLB season. Just in my initial investigation, there appeared to be some <code>NA</code> data points, so we’ll have to clean the data up. I also noticed that there is some inconsistent or inappropriate type formatting, so we’ll have to clean that up as well.</p>
+<div id="here-is-an-overview-of-each-dataset" class="section level4">
+<h4>Here is an overview of each dataset</h4>
+<div id="foul_balls" class="section level5">
+<h5><code>foul_balls</code></h5>
 <ul>
 <li><strong><code>matchup</code></strong>
 <ul>
 <li>The two teams that played. Formatted like <code>Atlanta Braves vs New York Mets</code>. In order to have a merge point for this set and the previous set, I am going to make a lookup table with the team names and their corresponding three character codes.</li>
 </ul></li>
-<li><strong><code>game_date</code></strong>
+<li><strong><code>date</code></strong>
 <ul>
-<li>Date of the most foul-heavy day at each stadium. Formatted like <code>yyyymmdd</code>.</li>
+<li>Date of the most foul-heavy day at each stadium. Formatted like <code>yyyy-mm-dd</code>.</li>
 </ul></li>
-<li><strong><code>type_of_hit</code></strong>
+<li><strong><code>hit_type</code></strong>
 <ul>
-<li>Fly, grounder, line drive, pop up or batter hit self. Formated as a lowercase string.</li>
+<li>Fly, grounder, line drive, pop up or batter hit self. Formated as a string.</li>
 </ul></li>
-<li><strong><code>exit_velocity</code></strong>
+<li><strong><code>velocity</code></strong>
 <ul>
 <li>Recorded exit velocity of each hit – blank if not provided. Formatted as a double</li>
 </ul></li>
@@ -261,6 +263,124 @@ source(&quot;deliverable1.r&quot;)</code></pre>
 <li>The zone used for analysis. Formatted as a factor.</li>
 </ul></li>
 </ul>
+</div>
+<div id="launch_data" class="section level5">
+<h5><code>launch_data</code></h5>
+<ul>
+<li><strong><code>date</code></strong>
+<ul>
+<li>Date of the game where this hit was recorded Formatted like <code>yyyy-mm-dd</code>.</li>
+</ul></li>
+<li><strong><code>field</code></strong>
+<ul>
+<li>Field where the game was played. Formatted as string.</li>
+</ul></li>
+<li><strong><code>home</code></strong>
+<ul>
+<li>Name of home team’s 3 character abbreviation. Formatted as a string.</li>
+</ul></li>
+<li><strong><code>away</code></strong>
+<ul>
+<li>Name of away team’s 3 character abbreviation. Formatted as a string.</li>
+</ul></li>
+<li><strong><code>velocity</code></strong>
+<ul>
+<li>Exit velocity of the ball hit. Formatted as a double.</li>
+</ul></li>
+<li><strong><code>angle</code></strong>
+<ul>
+<li>Angle of the ball hit in degrees. Formatted as a double.</li>
+</ul></li>
+</ul>
+</div>
+<div id="standings" class="section level5">
+<h5><code>standings</code></h5>
+<ul>
+<li><strong><code>rank</code></strong>
+<ul>
+<li>Team rank overall. Formatted as a double</li>
+</ul></li>
+<li><strong><code>team</code></strong>
+<ul>
+<li>Team name’s 3 character abbreviation</li>
+</ul></li>
+<li><strong><code>games</code></strong>
+<ul>
+<li>Total number of games played. Formatted as a double.</li>
+</ul></li>
+<li><strong><code>wins</code></strong>
+<ul>
+<li>Total number of games won. Formatted as a double.</li>
+</ul></li>
+<li><strong><code>losses</code></strong>
+<ul>
+<li>Total number of games lost. Formatted as a double.</li>
+</ul></li>
+<li><strong><code>run_diff</code></strong>
+<ul>
+<li>Run differential (average runs scored - average runs allowed). Formatted as a double.</li>
+</ul></li>
+</ul>
+<p><strong>Let’s read in our new data on foul balls</strong></p>
+<pre class="r"><code>foul_balls &lt;- suppressMessages(read_csv(&quot;https://raw.githubusercontent.com/fivethirtyeight/data/master/foul-balls/foul-balls.csv&quot;))
+launch_data &lt;- suppressMessages(read_csv(&quot;./savant_data.csv&quot;))
+standings &lt;- suppressMessages(read_csv(&quot;./standings.csv&quot;))</code></pre>
+<p><strong>We’ll want to clean up our data now</strong></p>
+<p>In this block, I filtered our initial game data (<code>game_data</code>) to only include games from 1990-2016; omitted the missing data from our original foul balls data (<code>foul_balls</code>) from the article and our new foul ball data (<code>launch_data</code>) from the 2016 season; and narrowed our data selection in all of our sets. I’ll go into greater detail on these selected variables.</p>
+<pre class="r"><code>game_data &lt;- game_data %&gt;%
+  filter(date &gt;= 19900101)
+
+foul_balls &lt;- foul_balls %&gt;%
+  na.omit()
+
+launch_data &lt;- launch_data %&gt;%
+  select(c(game_date, player_name, home_team, away_team, launch_speed, launch_angle)) %&gt;%
+  filter(launch_speed != &quot;null&quot;, launch_angle != &quot;null&quot;)
+
+standings &lt;- standings %&gt;%
+  select(c(Rk, Tm, G, W, L, Rdiff))</code></pre>
+<p><strong>I wanted to rename the columns of our sets too</strong></p>
+<pre class="r"><code>game_data &lt;- game_data %&gt;%
+  rename(away=v_name, home=h_name)
+
+foul_balls &lt;- foul_balls %&gt;%
+  rename(date = game_date, hit_type = type_of_hit, velocity = exit_velocity)
+
+launch_data &lt;- launch_data %&gt;%
+  rename(date=game_date, field=player_name, home=home_team, away=away_team, velocty=launch_speed, angle=launch_angle)
+
+standings &lt;- standings %&gt;%
+  rename(rank=Rk, team=Tm, games=G, win=W, losses=L, run_diff=Rdiff)
+
+new&lt;-game_data</code></pre>
+<p><strong>Now we need to standardize the formatting of our variables</strong></p>
+<p>Here we converted the dates to an actual date format, made our foul ball zones factors, and our velocity and angle to a numeric type instead of a character.</p>
+<pre class="r"><code>game_data$date &lt;- as.character(game_data$date)
+game_data$date &lt;- as.Date(game_data$date, format=&quot;%Y%m%d&quot;)
+
+foul_balls$predicted_zone &lt;- as.factor(foul_balls$predicted_zone)
+foul_balls$camera_zone &lt;- as.factor(foul_balls$camera_zone)
+foul_balls$used_zone &lt;- as.factor(foul_balls$used_zone)
+
+launch_data$velocty &lt;- as.double(launch_data$velocty)
+launch_data$angle &lt;- as.double(launch_data$angle)</code></pre>
+<p><strong>To finalize cleaning our data, we need to do some work on the <code>matchup</code> column of our <code>foul_balls</code> data</strong></p>
+<p>Specifically the matchup is formatted like <code>Atlanta Braves vs New York Mets</code>. We want to offer consistency with our other data sets, so we are going to split this <code>matchup</code> into <code>home</code> and <code>away</code>. We’ll need to make a lookup table though to convert the full team name into it’s 3 character abbreviation. I just created my own csv file in an editor, so we’ll have to load that.</p>
+<pre class="r"><code>teams &lt;- suppressMessages(read_csv(&quot;./teams.csv&quot;))</code></pre>
+<p>Using regular expresions in <code>R</code>, we can split up the <code>matchup</code>’s into their <code>home</code> and <code>away</code> teams. We will want to grab everything in the string until we encounter “vs” or “VS” and store that as <code>away</code> team, since American convention holds that matchups are written as <em>away vs home</em>. We can throw away the “vs” or “VS” and then we can grab the second string and store it as the <code>home</code> team.</p>
+<p>After a lot of trial an error to match the abbreviations to the full names in the <code>foul_balls</code> set, I finally realized the their was some unnoticed spaces at the front of the home teams and at the back of the away teams. This happened because of the way I used <code>str_split()</code>. I believe you could eat the whitespace, but I instead decided to add some spaces to the team names in the lookup table.</p>
+<pre class="r"><code>split &lt;- str_split(foul_balls$matchup, &quot;(vs|VS)&quot;)
+mat &lt;- matrix(unlist(split), ncol=2, byrow=TRUE)
+matchup &lt;- as.data.frame(mat)
+foul_balls$home &lt;- as.character(matchup$V2)
+foul_balls$away &lt;- as.character(matchup$V1)
+
+teams$space_front &lt;- paste(&quot;&quot;, teams$full)
+teams$space_back &lt;- paste(teams$full, &quot;&quot;)
+foul_balls$home &lt;- teams[match(foul_balls$home, teams$space_front), &quot;abb&quot;]
+foul_balls$away &lt;- teams[match(foul_balls$away, teams$space_back), &quot;abb&quot;]</code></pre>
+</div>
+</div>
 </div>
 
 
