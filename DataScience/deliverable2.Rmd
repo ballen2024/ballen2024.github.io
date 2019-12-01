@@ -34,6 +34,7 @@ text-align: justify}
 # install.packages("tidyverse")
 # install.packages("knitr")
 # install.packages("stringr")
+# install.packages("caret")
 
 suppressMessages(library(tidyr))
 suppressMessages(library(dplyr))
@@ -42,6 +43,7 @@ suppressMessages(library(scales))
 suppressMessages(library(tidyverse))
 suppressMessages(library(knitr))
 suppressMessages(library(stringr))
+suppressMessages(library(caret))
 knit_print.data.frame <- lemon_print
 ```
 
@@ -131,7 +133,8 @@ launch_data <- launch_data %>%
 
 standings <- standings %>%
   select(c(Rk, Tm, G, W, L, W_L_per, Rdiff)) %>%
-  rename(rank=Rk, team=Tm, games=G, wins=W, losses=L, win_loss_percentage= W_L_per, run_diff=Rdiff)
+  rename(rank=Rk, team=Tm, games=G, wins=W, losses=L, win_loss_percentage= W_L_per, run_diff=Rdiff) %>%
+  na.omit()
 ```
 
 **Now we need to standardize the formatting of our variables**
@@ -207,12 +210,20 @@ head(teams)
 Based on the initial phase and the newfound data, some predictions I would like to model are:
 
 * Can you predict a team's record based on their run differential in the first month of the season?
-    + If you could predict a team's record based on their run differential in the first month of the season, that would bring significant change to the climate of the first month of the season and I think there would be a difference in the trades occuring before the trade deadline in July.
+    + If you could predict a team's record based on their run differential in the first month of the season, that would bring significant change to the climate of the first month of the season and I think there would be a difference in the trades occuring before the trade deadline in July. I will be exploring a win-loss percentage rather than an exact record at this time.
 * Do teams that hit more homeruns win more games?
     + If it was found that teams that hit more homeruns win more games, teams would probably want to draft more heavy hitters. Perhaps a look at which factors are significant in a teams record would be a good model.
 
 
 ### Model Planning
+
+**First I'll work on a model for predicting a team's win-loss percentage based on their run differential in the first month of the season**
+
+To do this, I created a tibble `run_differntial` with the data I wanted.  I filtered my data to only include games from the first month of the 2016 season. I then created a new column for the home team's run differential for that game as well as for the away team.
+
+I then created another tibble named `model`. This is what we will be training and testing our model with.
+
+
 ```{r}
 run_differential <- tibble(date=game_data$date, 
                            home=game_data$home, 
@@ -225,5 +236,61 @@ run_differential <- run_differential %>%
 
 run_differential <- run_differential %>%
   mutate(h_run_diff=(h_score-v_score), v_run_diff=(v_score-h_score))
+
+# I had to use the following 2 lines to get the win-loss percentage as a vector rather than a dataframe.
+# It seems when I extracted the match it stored it as a datafrane even though it was a list, which made
+# accessing it a pain, so I decided to strip it down to a vector first
+win_loss <- standings[match(teams$abb, standings$team), "win_loss_percentage"]
+win_loss <- as.vector(win_loss$win_loss_percentage * 100)
+
+model <- tibble(team=teams$abb,
+                run_diff=0,
+                win_loss_percentage=win_loss
+                )
+
+# I realize that this is a very inefficient algorithm, but for my purpose of only analyzing less 
+# than 400 x 30 observations, I deemed it okay. I'm sure there is a way to leverage the vectorization
+# of R to do this much more efficiently.
+for (x in 1:length(run_differential$date)) {
+  for (t in 1: length(model$team)) {
+    if (model$team[t] == run_differential$away[x]) {
+      model$run_diff[t] <- model$run_diff[t] + run_differential$v_run_diff[x]
+    }
+    if (model$team[t] == run_differential$home[x]) {
+      model$run_diff[t] <- model$run_diff[t] + run_differential$h_run_diff[x]
+    }
+  }
+}
+```
+
+**Now we are ready to create our model**
+
+```{r}
+set.seed(1) # set the seed to yield consistent values in the data partition
+selection <- createDataPartition(model$win_loss_percentage, p=0.75, list=FALSE)
+
+train <- model[selection, ]
+test <- model[-selection, ]
+
+
+train_model <- lm(data = train, formula=win_loss_percentage~run_diff)
+
+predictions <- train_model %>% 
+  predict(test)
+```
+
+```{r}
+summary(train_model)
+summary(predictions)
+```
+
+```{r, render=lemon_print}
+data.frame(R2 = R2(predictions, test$win_loss_percentage),
+            RMSE = RMSE(predictions, test$win_loss_percentage),
+            MAE = MAE(predictions, test$win_loss_percentage))
+```
+
+```{r}
+ggplot(test, aes(x=predictions, y=win_loss_percentage)) +geom_point()
 ```
 
