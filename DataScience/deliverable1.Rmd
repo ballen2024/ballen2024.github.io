@@ -12,15 +12,15 @@ text-align: justify}
 </style>
 
 
-####[Home](https://ballen2024.github.io/DataScience/index.html)
+#### [Home](https://ballen2024.github.io/DataScience/index.html)
 
-####[Phase 1: Discovery and Data Preparation](https://ballen2024.github.io/DataScience/deliverable1.html)
+#### [Phase 1: Discovery and Data Preparation](https://ballen2024.github.io/DataScience/deliverable1.html)
 
-####[Phase 2: Model Planning and Building](https://ballen2024.github.io/DataScience/deliverable2.html)
+#### [Phase 2: Model Planning and Building](https://ballen2024.github.io/DataScience/deliverable2.html)
 
-####[Phase 3: Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
+#### [Phase 3: Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
 
-###Getting Started
+### Getting Started
 First we want to import any necessary libraries we will be using. 
 
 ```{r warning=FALSE}
@@ -34,7 +34,7 @@ suppressMessages(library(scales))
 knit_print.data.frame <- lemon_print
 ```
 
-###Looking at the Data
+### Looking at the Data
 The data source [**Retrosheet**](https://www.retrosheet.org/) is a non-profit organization that is passionate about logging MLB data, old and new alike. The organization seems to be reputable and has been operating for over 20 years in collecting MLB statistics. The initial dataset `game_logs` includes **171,907 observations** with **161 variables**. Given the size and robustness of this dataset, it is not entirely useful to use all of it. For example, much of the game data from 1871 is not going to be entirely relevant if I want to corroborate with other available datasets, given that there likely won't be data from that year. There are also some missing data points or points labeled **0**. It is tough to tell whether **0** is an accurate representation of that attribute at that game or if it is an arbitrary value to indicate that data was not available for it.
 
 **For this stage of analysis, I have cleaned up the initial dataset to include 14 variables, which include:**
@@ -91,7 +91,7 @@ game_data <- game_data %>%
   na.omit()
 ```
 
-###Here is a quick look at the data so far
+### Here is a quick look at the data so far
 
 **This is a general look at all of the variables in the cleaned dataset**
 ```{r render=lemon_print, echo=FALSE}
@@ -106,7 +106,7 @@ It is worth noting that `v_homeruns` and `h_homeruns` indicate a minimum value o
 head(df)
 ```
 
-###Initial Exploration
+### Initial Exploration
 
 **An interesting finding was that according to our initial set, there is an exactly equal distribution of night and day games**
 
@@ -131,7 +131,7 @@ p <- ggplot(game_data, aes(x = year, y = game_data$attendance)) + geom_bar(stat=
 p
 ```
 
-###Potential Questions to Explore
+### Potential Questions to Explore
 
 1. __Do foul balls pose a serious safety risk to fans at MLB games?__
     + Some social implications of pursuing this question could potentially be greater safety precautions for MLB parks or separate requirements for fans that attend games to be equipped in safety or perhaps waiving any rights upon potential harm from a foul ball.

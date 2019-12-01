@@ -11,23 +11,32 @@ body {
 text-align: justify}
 </style>
 
-####[Home](https://ballen2024.github.io/DataScience/index.html)
 
-####[Phase 1: Discovery and Data Preparation](https://ballen2024.github.io/DataScience/deliverable1.html)
 
-####[Phase 2: Model Planning and Building](https://ballen2024.github.io/DataScience/deliverable2.html)
+#### [Home](https://ballen2024.github.io/DataScience/index.html)
 
-####[Phase 3: Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
+#### [Phase 1: Discovery and Data Preparation](https://ballen2024.github.io/DataScience/deliverable1.html)
 
-###Getting Started
+#### [Phase 2: Model Planning and Building](https://ballen2024.github.io/DataScience/deliverable2.html)
+
+#### [Phase 3: Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
+
+### Getting Started
 **First we want to import any necessary libraries we will be using.**
 
 **Note: Uncomment the install lines if you haven't yet installed these packages**
 ```{r warning=FALSE}
+# install.packages("tidyr")
+# install.packages("dplyr")
+# install.packages("devtools")
+# devtools::install_github("stefanedwards/lemon")
+# install.packages("scales")
+# install.packages("tidyverse")
+# install.packages("knitr")
+# install.packages("stringr")
+
 suppressMessages(library(tidyr))
 suppressMessages(library(dplyr))
-# suppressMessages(install.packages("devtools"))
-# suppressMessages(devtools::install_github("stefanedwards/lemon"))
 suppressMessages(library(lemon))
 suppressMessages(library(scales))
 suppressMessages(library(tidyverse))
@@ -41,12 +50,12 @@ knit_print.data.frame <- lemon_print
 purl("deliverable1.Rmd", output = "deliverable1.r")
 source("deliverable1.r")
 ```
-###Looking at the Data
+### Looking at the Data
 The data source [**Baseball Savant**](https://baseballsavant.mlb.com/statcast_search?hfPT=&hfAB=&hfBBT=&hfPR=foul%7C&hfZ=&stadium=&hfBBL=&hfNewZones=&hfGT=R%7C&hfC=&hfSea=2019%7C&hfSit=&player_type=pitcher&hfOuts=&opponent=&pitcher_throws=&batter_stands=&hfSA=&game_date_gt=&game_date_lt=2019-06-05&hfInfield=&team=&position=&hfOutfield=&hfRO=&home_road=&hfFlag=&hfPull=&metric_1=&hfInn=&min_pitches=0&min_results=0&group_by=venue&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_pas=0#results) is an MLB affiliate that collects baseball statistics for major league games. The initial data set here `foul_balls` includes **906** observations with **7** variables. The dataset was used originally to observe where the most dangerous foul balls land, which is discussed in depth in [this story](https://fivethirtyeight.com/features/we-watched-906-foul-balls-to-find-out-where-the-most-dangerous-ones-land/). Our `launch_data` set was also collected from this source. I also used [**Baseball Reference**](https://www.baseball-reference.com/leagues/MLB/2016-standings.shtml) to gather data on standings for the 2016 MLB season. Just in my initial investigation, there appeared to be some `NA` data points, so we'll have to clean the data up. I also noticed that there is some inconsistent or inappropriate type formatting, so we'll have to clean that up as well.
 
-####Here is an overview of each dataset
+#### Here is an overview of each dataset
 
-#####`foul_balls`
+##### `foul_balls`
 
 * __`matchup`__
     + The two teams that played. Formatted like `Atlanta Braves vs New York Mets`. In order to have a merge point for this set and the previous set, I am going to make a lookup table with the team names and their corresponding three character codes.
@@ -63,7 +72,7 @@ The data source [**Baseball Savant**](https://baseballsavant.mlb.com/statcast_se
 * __`used_zone`__
     + The zone used for analysis. Formatted as a factor.
 
-#####`launch_data`
+##### `launch_data`
 
 * __`date`__
     + Date of the game where this hit was recorded Formatted like `yyyy-mm-dd`.
@@ -78,7 +87,7 @@ The data source [**Baseball Savant**](https://baseballsavant.mlb.com/statcast_se
 * __`angle`__
     + Angle of the ball hit in degrees. Formatted as a double.
 
-#####`standings`
+##### `standings`
 
 * __`rank`__
     + Team rank overall. Formatted as a double
@@ -106,7 +115,7 @@ standings <- suppressMessages(read_csv("./standings.csv"))
 **We'll want to clean up our data now**
 
 In this block, I filtered our initial game data (`game_data`) to only include games from 2000-2016; omitted the missing data from our original foul balls data (`foul_balls`) from the article and our new foul ball data (`launch_data`) from the 2016 season; narrowed our data selection in all of our sets; and renamed the columns.
-```{r}
+```{r, warning=FALSE}
 game_data <- game_data %>%
   filter(date >= 19900101) %>%
   rename(away=v_name, home=h_name)
@@ -121,14 +130,14 @@ launch_data <- launch_data %>%
   rename(date=game_date, field=player_name, home=home_team, away=away_team, velocty=launch_speed, angle=launch_angle)
 
 standings <- standings %>%
-  select(c(Rk, Tm, G, W, L, Rdiff)) %>%
-  rename(rank=Rk, team=Tm, games=G, wins=W, losses=L, run_diff=Rdiff)
+  select(c(Rk, Tm, G, W, L, W_L_per, Rdiff)) %>%
+  rename(rank=Rk, team=Tm, games=G, wins=W, losses=L, win_loss_percentage= W_L_per, run_diff=Rdiff)
 ```
 
 **Now we need to standardize the formatting of our variables**
 
 Here we converted the dates to an actual date format, made our foul ball zones factors, and our velocity and angle to a numeric type instead of a character.
-```{r}
+```{r warning=FALSE}
 game_data$date <- as.character(game_data$date)
 game_data$date <- as.Date(game_data$date, format="%Y%m%d")
 
@@ -144,7 +153,7 @@ launch_data$angle <- as.double(launch_data$angle)
 **To finalize cleaning our data, we need to do some work on the `matchup` column of our `foul_balls` data**
 
 Specifically the matchup is formatted like `Atlanta Braves vs New York Mets`. We want to offer consistency with our other data sets, so we are going to split this `matchup` into `home` and `away`. We'll need to make a lookup table though to convert the full team name into it's 3 character abbreviation. I just created my own csv file for [this](https://github.com/ballen2024/ballen2024.github.io/blob/master/DataScience/teams.csv) in an editor, so we'll have to load that.
-```{r}
+```{r warning=FALSE}
 teams <- suppressMessages(read_csv("./teams.csv"))
 ```
 
@@ -152,7 +161,7 @@ Using regular expresions in `R`, we can split up the `matchup`'s into their `hom
 
 After a lot of trial an error to match the abbreviations to the full names in the `foul_balls` set, I finally realized the their was some unnoticed spaces at the front of the home teams and at the back of the away teams. This happened because of the way I used `str_split()`. I believe you could eat the whitespace, but I instead decided to add some spaces to the team names in the lookup table.
 
-```{r}
+```{r warning=FALSE}
 split <- str_split(foul_balls$matchup, "(vs|VS)")
 mat <- matrix(unlist(split), ncol=2, byrow=TRUE)
 matchup <- as.data.frame(mat)
@@ -167,34 +176,34 @@ foul_balls$away <- teams[match(foul_balls$away, teams$space_back), "abb"]
 
 **Here is a quick look at our data after being cleaned up**
 
-**`game_data`**
+#### `game_data`
 ```{r, echo=FALSE, render=lemon_print}
 head(game_data)
 ```
 
-**`foul_balls`**
+#### `foul_balls`
 ```{r, echo=FALSE, render=lemon_print}
 head(foul_balls)
 ```
 
-**`launch_data`**
+#### `launch_data`
 ```{r, echo=FALSE, render=lemon_print}
 head(launch_data)
 ```
 
-**`standings`**
+#### `standings`
 ```{r, echo=FALSE, render=lemon_print}
 head(standings)
 ```
 
-**`teams`**
+#### `teams`
 ```{r, echo=FALSE, render=lemon_print}
 head(teams)
 ```
 
 
 
-###Predictions to Model
+### Predictions to Model
 Based on the initial phase and the newfound data, some predictions I would like to model are:
 
 * Can you predict a team's record based on their run differential in the first month of the season?
@@ -202,4 +211,19 @@ Based on the initial phase and the newfound data, some predictions I would like 
 * Do teams that hit more homeruns win more games?
     + If it was found that teams that hit more homeruns win more games, teams would probably want to draft more heavy hitters. Perhaps a look at which factors are significant in a teams record would be a good model.
 
+
+### Model Planning
+```{r}
+run_differential <- tibble(date=game_data$date, 
+                           home=game_data$home, 
+                           away=game_data$away, 
+                           h_score=game_data$h_score, 
+                           v_score=game_data$v_score)
+run_differential <- run_differential %>%
+  filter(date >= "2016-04-03") %>%
+  filter(date <= "2016-05-03")
+
+run_differential <- run_differential %>%
+  mutate(h_run_diff=(h_score-v_score), v_run_diff=(v_score-h_score))
+```
 
