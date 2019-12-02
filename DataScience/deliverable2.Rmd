@@ -117,6 +117,8 @@ standings <- suppressMessages(read_csv("./standings.csv"))
 **We'll want to clean up our data now**
 
 In this block, I filtered our initial game data (`game_data`) to only include games from 2000-2016; omitted the missing data from our original foul balls data (`foul_balls`) from the article and our new foul ball data (`launch_data`) from the 2016 season; narrowed our data selection in all of our sets; and renamed the columns.
+
+**Note: I had to manually change the name of the win-loss percentage column name in the `standings` dataset. In the original set is is name `W-L%`, but `R` doesn't like the `%` since it is an operator, so I used a separate editor to change the name to `W_L_perc`**
 ```{r, warning=FALSE}
 game_data <- game_data %>%
   filter(date >= 19900101) %>%
@@ -331,3 +333,36 @@ for (x in 1:length(homeruns$date)) {
 }
 ```
 
+**Now we can create our model for this prediction**
+
+```{r}
+set.seed(1) # set the seed to yield consistent values in the data partition
+h_model_selection <- createDataPartition(homeruns_model$wins, p=0.75, list = FALSE)
+
+h_train <- homeruns_model[h_model_selection, ]
+h_test <- homeruns_model[-h_model_selection, ]
+
+
+h_train_model <- lm(data = h_train, formula=wins~homeruns)
+
+h_predictions <- h_train_model %>% 
+  predict(h_test)
+```
+
+In summarizing our model, we can see that homeruns are a very bad predictor of a teams total wins in a season.
+```{r}
+summary(h_train_model)
+summary(h_predictions)
+```
+
+Additionally, in our plot here we can see that there is clearly no relationship between the number of homeruns that a team hits and the total wins that they have in a season.
+```{r}
+ggplot(h_test, aes(x=h_predictions, y=wins)) + geom_point() + labs(x="Predicted Wins",y="Actual Wins",title="Model Predictions vs. Actual Values") + geom_abline()
+```
+
+To further illustrate how this is not a good predictor, I looked at the team with the highest amount of homeruns and where they placed in the MLB that season. I found that The Cincinnati Reds hit the most homeruns in 2016, but they actually only had 68 wins and placed 27 our 30 in the MLB that season.
+```{r, render=lemon_print}
+team_h_max <- homeruns_model[match(max(homeruns_model$homeruns), homeruns_model$homeruns), "team"]
+
+standings[match(team_h_max, standings$team), c("rank", "team", "wins")]
+```
