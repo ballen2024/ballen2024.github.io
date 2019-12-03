@@ -366,3 +366,7 @@ team_h_max <- homeruns_model[match(max(homeruns_model$homeruns), homeruns_model$
 
 standings[match(team_h_max, standings$team), c("rank", "team", "wins")]
 ```
+
+### Summary
+
+With the models build here, I was able to find that a teams run-differential in the first month of the season is a good predictor of a teams win-loss percentage at the end of the season. Clearly the predicition that homeruns would be telling of a teams wins was a dead end though. Some possible limitations to this model would be teams have the potential to start very strong in the season and die off I suppose. There are a lot of factors that would contribute to a teams success in a season; however, in the model here it was pretty compelling to see the relationship between the run differential and the team's win-loss percentage. Some ways to move forward with this model would be to train the model based on before and after the All-star break, by month, etc. Perhaps there are more significant time frames that would provide a more accurate result for a team's win-loss percentage.
