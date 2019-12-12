@@ -19,5 +19,4 @@ In this phase I clean and take a deeper look at other baseball datasets regardin
 
 ### [3. Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
 
-Coming soon...
 
