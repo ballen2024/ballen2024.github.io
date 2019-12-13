@@ -12,7 +12,6 @@ text-align: justify}
 </style>
 
 
-
 #### [Home](https://ballen2024.github.io/DataScience/index.html)
 
 #### [Phase 1: Discovery and Data Preparation](https://ballen2024.github.io/DataScience/deliverable1.html)
@@ -20,3 +19,77 @@ text-align: justify}
 #### [Phase 2: Model Planning and Building](https://ballen2024.github.io/DataScience/deliverable2.html)
 
 #### [Phase 3: Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
+
+
+### Getting Started:
+** First we want to import any necessary libraries we will be using **
+
+
+**Note: Uncomment the install lines if you haven't yet installed these packages**
+
+```{r}
+# install.packages("tidyr")
+# install.packages("dplyr")
+# install.packages("devtools")
+# devtools::install_github("stefanedwards/lemon")
+# install.packages("scales")
+# install.packages("tidyverse")
+# install.packages("knitr")
+# install.packages("stringr")
+# install.packages("caret")
+# devtools::install_github("BillPetti/baseballr")
+
+suppressMessages(library(tidyr))
+suppressMessages(library(dplyr))
+suppressMessages(library(lemon))
+suppressMessages(library(scales))
+suppressMessages(library(tidyverse))
+suppressMessages(library(knitr))
+suppressMessages(library(stringr))
+suppressMessages(library(caret))
+suppressMessages(library(baseballr))
+knit_print.data.frame <- lemon_print
+```
+
+**We will want to import all of our work from [Phase 1](https://ballen2024.github.io/DataScience/deliverable1.html) as well.**
+```{r  message=FALSE, error=FALSE, warning=FALSE, results='hide'}
+purl("deliverable2.Rmd", output = "deliverable2.r")
+source("deliverable2.r")
+```
+
+```{r}
+NL_standings <- as.data.frame(standings_on_date_bref(date = "2016-11-01", division = "NL Overall", from = FALSE))
+AL_standings <- as.data.frame(standings_on_date_bref(date = "2016-11-01", division = "AL Overall", from = FALSE))
+
+NL_standings <- NL_standings %>%
+  select(c(NL.Overall_up.to_2016.11.01.Tm, 
+           NL.Overall_up.to_2016.11.01.W, 
+           NL.Overall_up.to_2016.11.01.L, 
+           NL.Overall_up.to_2016.11.01.W.L., 
+           NL.Overall_up.to_2016.11.01.RS, 
+           NL.Overall_up.to_2016.11.01.RA)) %>%
+  rename(team=NL.Overall_up.to_2016.11.01.Tm,
+         wins=NL.Overall_up.to_2016.11.01.W,
+         losses=NL.Overall_up.to_2016.11.01.L,
+         win_loss_percentage=NL.Overall_up.to_2016.11.01.W.L.,
+         scored=NL.Overall_up.to_2016.11.01.RS,
+         allowed=NL.Overall_up.to_2016.11.01.RA)
+
+AL_standings <- AL_standings %>%
+  select(c(AL.Overall_up.to_2016.11.01.Tm, 
+           AL.Overall_up.to_2016.11.01.W, 
+           AL.Overall_up.to_2016.11.01.L, 
+           AL.Overall_up.to_2016.11.01.W.L.,
+           AL.Overall_up.to_2016.11.01.RS, 
+           AL.Overall_up.to_2016.11.01.RA))) %>%
+  rename(team=AL.Overall_up.to_2016.11.01.Tm,
+         wins=AL.Overall_up.to_2016.11.01.W,
+         losses=AL.Overall_up.to_2016.11.01.L,
+         win_loss_percentage=AL.Overall_up.to_2016.11.01.W.L.,
+         scored=AL.Overall_up.to_2016.11.01.RS,
+         allowed=AL.Overall_up.to_2016.11.01.RA)
+all_standings <- rbind(NL_standings, AL_standings)
+
+```
+
+

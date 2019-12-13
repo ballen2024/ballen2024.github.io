@@ -1677,6 +1677,7 @@ suppressMessages(library(tidyverse))
 suppressMessages(library(knitr))
 suppressMessages(library(stringr))
 suppressMessages(library(caret))
+suppressMessages(library(baseballr))
 knit_print.data.frame &lt;- lemon_print</code></pre>
 <p><strong>We will want to import all of our work from <a href="https://ballen2024.github.io/DataScience/deliverable1.html">Phase 1</a> as well.</strong></p>
 <pre class="r"><code>purl(&quot;deliverable1.Rmd&quot;, output = &quot;deliverable1.r&quot;)
@@ -2318,8 +2319,8 @@ predictions &lt;- train_model %&gt;%
 ##  0.4625  0.4794  0.5049  0.5196  0.5280  0.6383</code></pre>
 <p>We can see that our root-mean squared error method of measuring our model performance is best and shows that we have a 0.0636 error rate.</p>
 <pre class="r"><code>data.frame(R2 = R2(predictions, test$win_loss_percentage),
-            RMSE = RMSE(predictions, test$win_loss_percentage),
-            MAE = MAE(predictions, test$win_loss_percentage))</code></pre>
+          RMSE = RMSE(predictions, test$win_loss_percentage),
+          MAE = MAE(predictions, test$win_loss_percentage))</code></pre>
 <table>
 <thead>
 <tr class="header">
