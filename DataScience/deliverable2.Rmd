@@ -288,13 +288,8 @@ summary(train_model)
 summary(predictions)
 ```
 
-We can see that our root-mean squared error method of measuring our model performance is best and shows that we have a `r round(RMSE(predictions, test$win_loss_percentage)/mean(test$win_loss_percentage), 4)` error rate.
-```{r, render=lemon_print}
-data.frame(R2 = R2(predictions, test$win_loss_percentage),
-          RMSE = RMSE(predictions, test$win_loss_percentage),
-          MAE = MAE(predictions, test$win_loss_percentage))
+We can see that our root-mean squared error method of measuring our model performance is best and shows that we have a `r round(RMSE(predictions, test$win_loss_percentage/mean(test$win_loss_percentage)), 4)` error rate.
 
-```
 
 The following plot shows that we have a pretty linear relationship between our predicted win-loss percentage values and the actual values, which means our model works well, especially considering that we only pulled from the first month of the season.
 ```{r}

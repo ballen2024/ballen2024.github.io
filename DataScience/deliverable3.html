@@ -1719,6 +1719,77 @@ AL_standings &lt;- AL_standings %&gt;%
          allowed=AL.Overall_up.to_2016.11.01.RA)
 all_standings &lt;- rbind(NL_standings, AL_standings) %&gt;%
   mutate(run_diff = (scored-allowed))</code></pre>
+<p>Here is what the scraped dataset looks like:</p>
+<pre class="r"><code>head(all_standings)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="center">team</th>
+<th align="right">wins</th>
+<th align="right">losses</th>
+<th align="right">win_loss_percentage</th>
+<th align="right">scored</th>
+<th align="right">allowed</th>
+<th align="right">run_diff</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">CHC</td>
+<td align="right">103</td>
+<td align="right">58</td>
+<td align="right">0.640</td>
+<td align="right">808</td>
+<td align="right">556</td>
+<td align="right">252</td>
+</tr>
+<tr class="even">
+<td align="center">WSN</td>
+<td align="right">95</td>
+<td align="right">67</td>
+<td align="right">0.586</td>
+<td align="right">763</td>
+<td align="right">612</td>
+<td align="right">151</td>
+</tr>
+<tr class="odd">
+<td align="center">LAD</td>
+<td align="right">91</td>
+<td align="right">71</td>
+<td align="right">0.562</td>
+<td align="right">725</td>
+<td align="right">638</td>
+<td align="right">87</td>
+</tr>
+<tr class="even">
+<td align="center">NYM</td>
+<td align="right">87</td>
+<td align="right">75</td>
+<td align="right">0.537</td>
+<td align="right">671</td>
+<td align="right">617</td>
+<td align="right">54</td>
+</tr>
+<tr class="odd">
+<td align="center">SFG</td>
+<td align="right">87</td>
+<td align="right">75</td>
+<td align="right">0.537</td>
+<td align="right">715</td>
+<td align="right">631</td>
+<td align="right">84</td>
+</tr>
+<tr class="even">
+<td align="center">STL</td>
+<td align="right">86</td>
+<td align="right">76</td>
+<td align="right">0.531</td>
+<td align="right">779</td>
+<td align="right">712</td>
+<td align="right">67</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="further-visualization" class="section level3">
@@ -1729,8 +1800,22 @@ all_standings &lt;- rbind(NL_standings, AL_standings) %&gt;%
 </div>
 <div id="operationalization" class="section level3">
 <h3>Operationalization:</h3>
+<div id="recap" class="section level4">
+<h4>Recap</h4>
 <p>So, how can this model be operationalized? What significant impacts does this have on the game of baseball? To reiterate the model specifics, I looked at the run differentials of each team in the first month of the season and modeled it as a predictor of the final win-loss percentage of that team. Given that the results showed that this is a good predictor, this could have interesting impacts on the game, namely in how in-seasoning trading occurs. The trade deadline for the MLB is on July 31, which occurs in 3 months following our model data. So, this would allow teams to get an idea of who they might want to trade for, both in how their run differential is looking as well as other teams.</p>
+</div>
+<div id="further-exploration" class="section level4">
+<h4>Further Exploration</h4>
 <p>It would be nice for teams to narrow down their decision strategically as they look to trade, obviously, so it would be ideal to assign a value to each player on how they impact a team’s overall run differential. I would look at factors such as RBI’s, how they hit with runners in scoring position as opposed to when runners are not in scoring position, and defensive errors committed. This would allow teams to look at which players are having the greatest impact on a team’s overall run differential and would therefore be desirable for trade.</p>
+</div>
+<div id="social-ethical-implications" class="section level4">
+<h4>Social &amp; Ethical Implications</h4>
+<p>Baseball does not tend to have a huge impact on social or ethical issues, but some ways that this model would at least affect the game, as discussed above, would be who is getting traded and when. A potential unintended consequence of operationalizing this model is teams explicitly working to game the system and get their run differentials up in the first month. This is purely speculation though, because it seems that a team would absolutely want their run differential up regardless of its implications for trading in the following months.</p>
+</div>
+<div id="moving-forward" class="section level4">
+<h4>Moving Forward</h4>
+<p>There are some things to consider moving foward with the application of this model. We would want to look at how a player is doing throughout the season and if there is a way that we could predict their seasonal performance in the first month as well or at least get an idea of points to look at in a player during that first month, that would assist in refining the model. We would also want to account for pitchers specially. They do not contribute to a team’s run differential in the same way that a heavy hitter would, but arguably they contribute the most in the ERA. We would definitely want to include that on an individual players “run differential impact score”.</p>
+</div>
 </div>
 
 

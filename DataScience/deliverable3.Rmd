@@ -99,6 +99,12 @@ all_standings <- rbind(NL_standings, AL_standings) %>%
 
 ```
 
+Here is what the scraped dataset looks like:
+```{r, render=lemon_print}
+head(all_standings)
+```
+
+
 ### Further Visualization
 I wanted to further visualize the model of run-differential predicting a team's win-loss percentage. Here you can see that I ploted the run-differential and win-loss percentages for the 2016 season and overlayed my fit line that my model from Phase 2 generated. The plot shows that it is a pretty good fit.
 
@@ -107,6 +113,15 @@ ggplot(model, aes(x=run_diff, y=win_loss_percentage)) + geom_point() + geom_abli
 ```
 
 ### Operationalization:
+
+#### Recap
 So, how can this model be operationalized? What significant impacts does this have on the game of baseball? To reiterate the model specifics, I looked at the run differentials of each team in the first month of the season and modeled it as a predictor of the final win-loss percentage of that team. Given that the results showed that this is a good predictor, this could have interesting impacts on the game, namely in how in-seasoning trading occurs. The trade deadline for the MLB is on July 31, which occurs in 3 months following our model data. So, this would allow teams to get an idea of who they might want to trade for, both in how their run differential is looking as well as other teams.
 
+#### Further Exploration
 It would be nice for teams to narrow down their decision strategically as they look to trade, obviously, so it would be ideal to assign a value to each player on how they impact a team's overall run differential. I would look at factors such as RBI's, how they hit with runners in scoring position as opposed to when runners are not in scoring position, and defensive errors committed. This would allow teams to look at which players are having the greatest impact on a team's overall run differential and would therefore be desirable for trade.
+
+#### Social & Ethical Implications
+Baseball does not tend to have a huge impact on social or ethical issues, but some ways that this model would at least affect the game, as discussed above, would be who is getting traded and when. A potential unintended consequence of operationalizing this model is teams explicitly working to game the system and get their run differentials up in the first month. This is purely speculation though, because it seems that a team would absolutely want their run differential up regardless of its implications for trading in the following months.
+
+#### Moving Forward
+There are some things to consider moving foward with the application of this model. We would want to look at how a player is doing throughout the season and if there is a way that we could predict their seasonal performance in the first month as well or at least get an idea of points to look at in a player during that first month, that would assist in refining the model. We would also want to account for pitchers specially. They do not contribute to a team's run differential in the same way that a heavy hitter would, but arguably they contribute the most in the ERA. We would definitely want to include that on an individual players "run differential impact score".

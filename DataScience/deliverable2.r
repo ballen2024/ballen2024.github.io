@@ -161,13 +161,6 @@ summary(train_model)
 summary(predictions)
 
 
-## ---- render=lemon_print------------------------------------------------------
-data.frame(R2 = R2(predictions, test$win_loss_percentage),
-          RMSE = RMSE(predictions, test$win_loss_percentage),
-          MAE = MAE(predictions, test$win_loss_percentage))
-
-
-
 ## -----------------------------------------------------------------------------
 ggplot(test, aes(x=predictions, y=win_loss_percentage)) + geom_point() + labs(x="Predicted Win-Loss Percentage",y="Actual Win-Loss Percentage",title="Model Predictions vs. Actual Values") + geom_abline()
 
