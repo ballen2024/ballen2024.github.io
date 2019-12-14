@@ -18,5 +18,5 @@ The choice of this dataset came from a motivation to determine where the most da
 In this phase I clean and take a deeper look at other baseball datasets regarding foul balls and 2016 season standings; explore some models for these data; and visualize what these models say.
 
 ### [3. Results and Operationalization](https://ballen2024.github.io/DataScience/deliverable3.html)
-
+In this phase I further break down my model of run differntial in the first month of the season being a good predictor of a team's final win-loss percentage, provide more visualization for this model, and discuss operationalization of this model.
 

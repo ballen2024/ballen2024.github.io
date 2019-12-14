@@ -1,4 +1,4 @@
-## ----warning=FALSE-------------------------------------------------------------------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 # install.packages("tidyr")
 # install.packages("dplyr")
 # install.packages("devtools")
@@ -17,22 +17,23 @@ suppressMessages(library(tidyverse))
 suppressMessages(library(knitr))
 suppressMessages(library(stringr))
 suppressMessages(library(caret))
+suppressMessages(library(baseballr))
 knit_print.data.frame <- lemon_print
 
 
-## ----message=FALSE, error=FALSE, warning=FALSE, results='hide'-----------------------------------------------------------------------
+## ----message=FALSE, error=FALSE, warning=FALSE, results='hide'----------------
 purl("deliverable1.Rmd", output = "deliverable1.r")
 source("deliverable1.r")
 
 
-## ---- warning=FALSE------------------------------------------------------------------------------------------------------------------
+## ---- warning=FALSE-----------------------------------------------------------
 foul_balls <- suppressMessages(read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/foul-balls/foul-balls.csv"))
 launch_data <- suppressMessages(read_csv("./savant_data.csv"))
 standings <- suppressMessages(read_csv("./standings.csv"))
 
 
 
-## ---- warning=FALSE------------------------------------------------------------------------------------------------------------------
+## ---- warning=FALSE-----------------------------------------------------------
 game_data <- game_data %>%
   filter(date >= 19900101) %>%
   rename(away=v_name, home=h_name)
@@ -52,7 +53,7 @@ standings <- standings %>%
   na.omit()
 
 
-## ----warning=FALSE-------------------------------------------------------------------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 game_data$date <- as.character(game_data$date)
 game_data$date <- as.Date(game_data$date, format="%Y%m%d")
 
@@ -65,11 +66,11 @@ launch_data$angle <- as.double(launch_data$angle)
 
 
 
-## ----warning=FALSE-------------------------------------------------------------------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 teams <- suppressMessages(read_csv("./teams.csv"))
 
 
-## ----warning=FALSE-------------------------------------------------------------------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 split <- str_split(foul_balls$matchup, "(vs|VS)")
 mat <- matrix(unlist(split), ncol=2, byrow=TRUE)
 matchup <- as.data.frame(mat)
@@ -82,27 +83,27 @@ foul_balls$home <- teams[match(foul_balls$home, teams$space_front), "abb"]
 foul_balls$away <- teams[match(foul_balls$away, teams$space_back), "abb"]
 
 
-## ---- echo=FALSE, render=lemon_print-------------------------------------------------------------------------------------------------
+## ---- echo=FALSE, render=lemon_print------------------------------------------
 head(game_data)
 
 
-## ---- echo=FALSE, render=lemon_print-------------------------------------------------------------------------------------------------
+## ---- echo=FALSE, render=lemon_print------------------------------------------
 head(foul_balls)
 
 
-## ---- echo=FALSE, render=lemon_print-------------------------------------------------------------------------------------------------
+## ---- echo=FALSE, render=lemon_print------------------------------------------
 head(launch_data)
 
 
-## ---- echo=FALSE, render=lemon_print-------------------------------------------------------------------------------------------------
+## ---- echo=FALSE, render=lemon_print------------------------------------------
 head(standings)
 
 
-## ---- echo=FALSE, render=lemon_print-------------------------------------------------------------------------------------------------
+## ---- echo=FALSE, render=lemon_print------------------------------------------
 head(teams)
 
 
-## ------------------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 run_differential <- tibble(date=game_data$date, 
                            home=game_data$home, 
                            away=game_data$away, 
@@ -141,7 +142,7 @@ for (x in 1:length(run_differential$date)) {
 }
 
 
-## ------------------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 set.seed(1) # set the seed to yield consistent values in the data partition
 selection <- createDataPartition(model$win_loss_percentage, p=0.75, list=FALSE)
 
@@ -155,23 +156,23 @@ predictions <- train_model %>%
   predict(test)
 
 
-## ------------------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 summary(train_model)
 summary(predictions)
 
 
-## ---- render=lemon_print-------------------------------------------------------------------------------------------------------------
+## ---- render=lemon_print------------------------------------------------------
 data.frame(R2 = R2(predictions, test$win_loss_percentage),
-            RMSE = RMSE(predictions, test$win_loss_percentage),
-            MAE = MAE(predictions, test$win_loss_percentage))
+          RMSE = RMSE(predictions, test$win_loss_percentage),
+          MAE = MAE(predictions, test$win_loss_percentage))
 
 
 
-## ------------------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ggplot(test, aes(x=predictions, y=win_loss_percentage)) + geom_point() + labs(x="Predicted Win-Loss Percentage",y="Actual Win-Loss Percentage",title="Model Predictions vs. Actual Values") + geom_abline()
 
 
-## ------------------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 homeruns <- tibble(date=game_data$date,
                    home=game_data$home,
                    away=game_data$away,
@@ -199,7 +200,7 @@ for (x in 1:length(homeruns$date)) {
 }
 
 
-## ------------------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 set.seed(1) # set the seed to yield consistent values in the data partition
 h_model_selection <- createDataPartition(homeruns_model$wins, p=0.75, list = FALSE)
 
@@ -213,16 +214,16 @@ h_predictions <- h_train_model %>%
   predict(h_test)
 
 
-## ------------------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 summary(h_train_model)
 summary(h_predictions)
 
 
-## ------------------------------------------------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ggplot(h_test, aes(x=h_predictions, y=wins)) + geom_point() + labs(x="Predicted Wins",y="Actual Wins",title="Model Predictions vs. Actual Values") + geom_abline()
 
 
-## ---- render=lemon_print-------------------------------------------------------------------------------------------------------------
+## ---- render=lemon_print------------------------------------------------------
 team_h_max <- homeruns_model[match(max(homeruns_model$homeruns), homeruns_model$homeruns), "team"]
 
 standings[match(team_h_max, standings$team), c("rank", "team", "wins")]

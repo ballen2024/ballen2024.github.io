@@ -22,7 +22,8 @@ text-align: justify}
 
 
 ### Getting Started:
-** First we want to import any necessary libraries we will be using **
+
+**First we want to import any necessary libraries we will be using**
 
 
 **Note: Uncomment the install lines if you haven't yet installed these packages**
@@ -51,11 +52,16 @@ suppressMessages(library(baseballr))
 knit_print.data.frame <- lemon_print
 ```
 
-**We will want to import all of our work from [Phase 1](https://ballen2024.github.io/DataScience/deliverable1.html) as well.**
+**We will want to import all of our work from [Phase 2](https://ballen2024.github.io/DataScience/deliverable2.html) as well.**
+
 ```{r  message=FALSE, error=FALSE, warning=FALSE, results='hide'}
 purl("deliverable2.Rmd", output = "deliverable2.r")
 source("deliverable2.r")
 ```
+#### Addressing Issues:
+**In order to address the issue that there were only .csv fil e types, I webscraped some data for my standings data. The data is the same as it is from the same website that I downloaded the .csv file from. Using an `R` package called `baseballr` I was easily able to scrape standings data from the 2016 MLB season.**
+
+One limitation of the `baseballr` function for scraping from Baseball Reference is that you cannot grab all of the standings, only by league. In order to get around this limitation, I used `rbind()` to combine my scraped sets into one.
 
 ```{r}
 NL_standings <- as.data.frame(standings_on_date_bref(date = "2016-11-01", division = "NL Overall", from = FALSE))
@@ -81,15 +87,26 @@ AL_standings <- AL_standings %>%
            AL.Overall_up.to_2016.11.01.L, 
            AL.Overall_up.to_2016.11.01.W.L.,
            AL.Overall_up.to_2016.11.01.RS, 
-           AL.Overall_up.to_2016.11.01.RA))) %>%
+           AL.Overall_up.to_2016.11.01.RA)) %>%
   rename(team=AL.Overall_up.to_2016.11.01.Tm,
          wins=AL.Overall_up.to_2016.11.01.W,
          losses=AL.Overall_up.to_2016.11.01.L,
          win_loss_percentage=AL.Overall_up.to_2016.11.01.W.L.,
          scored=AL.Overall_up.to_2016.11.01.RS,
          allowed=AL.Overall_up.to_2016.11.01.RA)
-all_standings <- rbind(NL_standings, AL_standings)
+all_standings <- rbind(NL_standings, AL_standings) %>%
+  mutate(run_diff = (scored-allowed))
 
 ```
 
+### Further Visualization
+I wanted to further visualize the model of run-differential predicting a team's win-loss percentage. Here you can see that I ploted the run-differential and win-loss percentages for the 2016 season and overlayed my fit line that my model from Phase 2 generated. The plot shows that it is a pretty good fit.
 
+```{r}
+ggplot(model, aes(x=run_diff, y=win_loss_percentage)) + geom_point() + geom_abline(slope = 0.0015, intercept = 0.501) + labs(x="Run Differential", y="Win-Loss Percentage", title="Run differential as a predictor of win-loss percentage")
+```
+
+### Operationalization:
+So, how can this model be operationalized? What significant impacts does this have on the game of baseball? To reiterate the model specifics, I looked at the run differentials of each team in the first month of the season and modeled it as a predictor of the final win-loss percentage of that team. Given that the results showed that this is a good predictor, this could have interesting impacts on the game, namely in how in-seasoning trading occurs. The trade deadline for the MLB is on July 31, which occurs in 3 months following our model data. So, this would allow teams to get an idea of who they might want to trade for, both in how their run differential is looking as well as other teams.
+
+It would be nice for teams to narrow down their decision strategically as they look to trade, obviously, so it would be ideal to assign a value to each player on how they impact a team's overall run differential. I would look at factors such as RBI's, how they hit with runners in scoring position as opposed to when runners are not in scoring position, and defensive errors committed. This would allow teams to look at which players are having the greatest impact on a team's overall run differential and would therefore be desirable for trade.
